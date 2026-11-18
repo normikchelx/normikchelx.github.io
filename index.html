@@ -4,10 +4,14 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title data-i18n="pageTitle">Normik Chel — Links</title>
-  <link rel="icon" type="image/jpeg" href="https://pbs.twimg.com/profile_images/1883230717733130240/-bKzb0RZ_400x400.jpg" />
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <script>
+    (function () {
+      const theme = localStorage.getItem('normik-theme') || 'system';
+      if (theme === 'light' || theme === 'dark') {
+        document.documentElement.classList.add('theme-' + theme);
+      }
+    })();
+  </script>
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
