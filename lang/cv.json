@@ -1,11 +1,14 @@
 {
-    "pageTitle": "Нормик Чел — Сĕнĕмсем",
+    "pageTitle": "Нормик Чел — Каçăсем",
     "mainTitle": "Нормик Чел",
     "linkWebsite": "🌐 Сайт",
     "linkYoutube": "🎬 YouTube каналĕ",
-    "linkBluesky": "🐦 Bluesky профилĕ",
+    "linkBluesky": "🐦 Bluesky страници",
     "linkInstagram": "📷 Instagram",
-    "linkEmail": "📧 Email",
-    "linkVero": "🖼️ Vero профилĕ",
-    "footer": "© 2024 Нормик Чел"
+    "linkEmail": "📧 Почта",
+    "linkVero": "🖼️ Vero страници",
+    "footer": "© 2024 Нормик Чел",
+    "systemTitle": "Тытăм",
+    "lightTitle": "Çутă",
+    "darkTitle": "Тĕттĕм"
 }

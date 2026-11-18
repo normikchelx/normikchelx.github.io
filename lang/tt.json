@@ -1,11 +1,14 @@
 {
-    "pageTitle": "Нормик Чел — Сілтеләр",
+    "pageTitle": "Нормик Чел — Сылтамалар",
     "mainTitle": "Нормик Чел",
     "linkWebsite": "🌐 Сайт",
     "linkYoutube": "🎬 YouTube каналы",
-    "linkBluesky": "🐦 Bluesky профиле",
+    "linkBluesky": "🐦 Bluesky сәхифәсе",
     "linkInstagram": "📷 Instagram",
-    "linkEmail": "📧 Email",
-    "linkVero": "🖼️ Vero профиле",
-    "footer": "© 2024 Нормик Чел"
+    "linkEmail": "📧 Почта",
+    "linkVero": "🖼️ Vero сәхифәсе",
+    "footer": "© 2024 Нормик Чел",
+    "systemTitle": "Система",
+    "lightTitle": "Якты",
+    "darkTitle": "Караңгы"
 }

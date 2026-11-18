@@ -3,9 +3,12 @@
     "mainTitle": "Нормик Чел",
     "linkWebsite": "🌐 Сайт",
     "linkYoutube": "🎬 YouTube каналы",
-    "linkBluesky": "🐦 Bluesky профиле",
+    "linkBluesky": "🐦 Bluesky сәхифәһе",
     "linkInstagram": "📷 Instagram",
-    "linkEmail": "📧 Email",
-    "linkVero": "🖼️ Vero профиле",
-    "footer": "© 2024 Нормик Чел"
+    "linkEmail": "📧 Почта",
+    "linkVero": "🖼️ Vero сәхифәһе",
+    "footer": "© 2024 Нормик Чел",
+    "systemTitle": "Система",
+    "lightTitle": "Яҡты",
+    "darkTitle": "Ҡараңғы"
 }

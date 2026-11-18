@@ -1,11 +1,14 @@
 {
-    "pageTitle": "Нормик Чел — ТӀетоьхнарг",
+    "pageTitle": "Нормик Чел — Хьажориш",
     "mainTitle": "Нормик Чел",
     "linkWebsite": "🌐 Сайт",
     "linkYoutube": "🎬 YouTube канал",
-    "linkBluesky": "🐦 Bluesky профиль",
+    "linkBluesky": "🐦 Bluesky агӀо",
     "linkInstagram": "📷 Instagram",
-    "linkEmail": "📧 Email",
-    "linkVero": "🖼️ Vero профиль",
-    "footer": "© 2024 Нормик Чел"
+    "linkEmail": "📧 Пошт",
+    "linkVero": "🖼️ Vero агӀо",
+    "footer": "© 2024 Нормик Чел",
+    "systemTitle": "Система",
+    "lightTitle": "Сирла",
+    "darkTitle": "Ӏаьржа"
 }

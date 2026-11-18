@@ -1,11 +1,14 @@
 {
-    "pageTitle": "Нормик Чел — Ссылкаби",
+    "pageTitle": "Нормик Чел — РегӀелал",
     "mainTitle": "Нормик Чел",
     "linkWebsite": "🌐 Сайт",
     "linkYoutube": "🎬 YouTube канал",
-    "linkBluesky": "🐦 Bluesky профиль",
+    "linkBluesky": "🐦 Bluesky гьумер",
     "linkInstagram": "📷 Instagram",
-    "linkEmail": "📧 Email",
-    "linkVero": "🖼️ Vero профиль",
-    "footer": "© 2024 Нормик Чел"
+    "linkEmail": "📧 Почта",
+    "linkVero": "🖼️ Vero гьумер",
+    "footer": "© 2024 Нормик Чел",
+    "systemTitle": "Система",
+    "lightTitle": "КантӀаб",
+    "darkTitle": "БецӀаб"
 }

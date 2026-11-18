@@ -1,11 +1,14 @@
 {
     "pageTitle": "Нормік Чел — Посилання",
     "mainTitle": "Нормік Чел",
-    "linkWebsite": "🌐 Сайт",
-    "linkYoutube": "🎬 Канал на YouTube",
+    "linkWebsite": "🌐 Вебсайт",
+    "linkYoutube": "🎬 Канал YouTube",
     "linkBluesky": "🐦 Профіль у Bluesky",
     "linkInstagram": "📷 Instagram",
-    "linkEmail": "📧 Email",
+    "linkEmail": "📧 Пошта",
     "linkVero": "🖼️ Профіль у Vero",
-    "footer": "© 2024 Нормік Чел"
+    "footer": "© 2024 Нормік Чел",
+    "systemTitle": "Система",
+    "lightTitle": "Світла",
+    "darkTitle": "Темна"
 }
