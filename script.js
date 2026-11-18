@@ -214,12 +214,12 @@ function updateLangUI(code) {
 
 async function loadAndApplyLang(lang) {
   try {
-    const response = await fetch(`lang/${lang}.json`);
+    const response = await fetch(`lang/${lang}.json?v=3`);
 
     if (!response.ok) {
       console.warn(`Translation file for ${lang} not found, falling back to EN.`);
       if (lang !== 'en') {
-        const enRes = await fetch('lang/en.json');
+        const enRes = await fetch('lang/en.json?v=3');
         if (enRes.ok) {
           const enData = await enRes.json();
           applyLang(enData);
