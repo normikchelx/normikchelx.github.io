@@ -1,16 +1,55 @@
 const langConfig = {
+  as: 'অসমীয়া',
   av: 'Авар мацӀ',
+  ay: 'Aymar aru',
   ba: 'Башҡортса',
   be: 'Беларуская',
+  bn: 'বাংলা',
+  bo: 'བོད་སྐད།',
+  brx: 'बड़ो',
   ce: 'Нохчийн',
+  chr: 'ᏣᎳᎩ',
   cv: 'Чӑвашла',
+  doi: 'डोगरी',
   en: 'English',
+  gn: 'Avañe’ẽ',
+  gu: 'ગુજરાતી',
+  hak: '客家話',
+  hi: 'हिन्दी',
+  iu: 'ᐃᓄᒃᑎᑐᑦ',
   kk: 'Қазақша',
+  kn: 'ಕನ್ನಡ',
+  ko: '한국어',
+  kok: 'कोंकणी',
+  ks: 'کٲشُر',
   kv: 'Коми',
+  mai: 'मैथिली',
+  ml: 'മലയാളം',
+  'mn-Mong': 'ᠮᠣᠩᠭᠣᠯ',
+  mni: 'ꯃꯩꯇꯩꯂꯣꯟ',
+  mr: 'मराठी',
+  nan: '臺灣話',
+  ne: 'नेपाली',
+  or: 'ଓଡ଼ିଆ',
   os: 'Ирон ӕвзаг',
+  pa: 'ਪੰਜਾਬੀ',
+  qu: 'Runasimi',
   ru: 'Русский',
+  sa: 'संस्कृतम्',
+  sat: 'ᱥᱟᱱᱛᱟᱲᱤ',
+  sd: 'سنڌي',
+  ta: 'தமிழ்',
+  te: 'తెలుగు',
   tt: 'Татарча',
-  uk: 'Українська'
+  ug: 'ئۇيغۇرچە',
+  uk: 'Українська',
+  ur: 'اردو',
+  wuu: '吳語',
+  yue: '粵語',
+  za: 'Vahcuengh',
+  'zh-CN': '普通话',
+  'zh-SG': '华语',
+  'zh-TW': '國語'
 };
 
 const sortedLangs = Object.entries(langConfig).sort(([codeA], [codeB]) =>
@@ -214,12 +253,12 @@ function updateLangUI(code) {
 
 async function loadAndApplyLang(lang) {
   try {
-    const response = await fetch(`lang/${lang}.json?v=3`);
+    const response = await fetch(`lang/${lang}.json?v=4`);
 
     if (!response.ok) {
       console.warn(`Translation file for ${lang} not found, falling back to EN.`);
       if (lang !== 'en') {
-        const enRes = await fetch('lang/en.json?v=3');
+        const enRes = await fetch('lang/en.json?v=4');
         if (enRes.ok) {
           const enData = await enRes.json();
           applyLang(enData);
