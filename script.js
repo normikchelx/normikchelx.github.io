@@ -1,27 +1,104 @@
-const langFiles = {
-    en: './lang/en.json',
-    ru: './lang/ru.json',
-    uk: './lang/uk.json',
-    be: './lang/be.json',
-    tt: './lang/tt.json',
-    ba: './lang/ba.json',
-    cv: './lang/cv.json',
-    ce: './lang/ce.json',
-    kv: './lang/kv.json',
-    av: './lang/av.json',
-    os: './lang/os.json'
+// Конфигурация языков
+// Ключи - это коды языков (be, ru, en и т.д.)
+// Значения - это отображаемые названия в дропдауне
+const langConfig = {
+    en: 'English',
+    ru: 'Русский',
+    uk: 'Українська',
+    be: 'Беларуская', // Исправлено с BY на BE
+    tt: 'Татарча',
+    ba: 'Башҡортса',
+    cv: 'Чӑвашла',
+    ce: 'Нохчийн',
+    kv: 'Коми',
+    av: 'Авар мацӀ',
+    os: 'Ирон ӕвзаг'
 };
 
-let currentLang = 'en';
+// Инициализация при загрузке
+document.addEventListener('DOMContentLoaded', () => {
+    initTheme();
+    initLanguage();
+});
 
-async function loadLang(lang) {
+// --- ЛОГИКА ТЕМ ---
+function initTheme() {
+    const savedTheme = localStorage.getItem('normik-theme') || 'system';
+    setTheme(savedTheme);
+    
+    const themeSelector = document.getElementById('theme-selector');
+    if (themeSelector) {
+        themeSelector.value = savedTheme;
+        themeSelector.addEventListener('change', (e) => {
+            const selected = e.target.value;
+            localStorage.setItem('normik-theme', selected);
+            setTheme(selected);
+        });
+    }
+}
+
+function setTheme(theme) {
+    const body = document.body;
+    body.className = ''; // Сброс классов
+    
+    if (theme === 'light') {
+        body.classList.add('theme-light');
+    } else if (theme === 'dark') {
+        body.classList.add('theme-dark');
+    }
+    // Если 'system', классы не добавляем, работают медиа-запросы CSS
+}
+
+// --- ЛОГИКА ЯЗЫКОВ ---
+function initLanguage() {
+    const savedLang = localStorage.getItem('normik-lang') || 'en';
+    const langSelector = document.getElementById('lang-selector');
+    
+    // 1. Динамическое заполнение дропдауна
+    if (langSelector) {
+        for (const [code, name] of Object.entries(langConfig)) {
+            const option = document.createElement('option');
+            option.value = code;
+            option.textContent = `${code.toUpperCase()} - ${name}`;
+            langSelector.appendChild(option);
+        }
+        langSelector.value = savedLang;
+        
+        // 2. Обработка смены языка
+        langSelector.addEventListener('change', async (e) => {
+            const selectedLang = e.target.value;
+            localStorage.setItem('normik-lang', selectedLang);
+            
+            // 3. Смена атрибута lang в HTML
+            document.documentElement.lang = selectedLang;
+            
+            // 4. Загрузка и применение перевода
+            await loadAndApplyLang(selectedLang);
+        });
+    }
+    
+    // Загрузка начального языка
+    loadAndApplyLang(savedLang);
+}
+
+async function loadAndApplyLang(lang) {
     try {
-        const res = await fetch(langFiles[lang]);
-        if (!res.ok) throw new Error(`Failed to load \${lang}`);
-        return await res.json();
-    } catch (e) {
-        console.error(e);
-        return {};
+        // Формируем путь к файлу
+        const response = await fetch(`lang/\${lang}.json`);
+        
+        if (!response.ok) {
+            console.warn(`Файл перевода для \${lang} не найден, используем EN.`);
+            // Если файла нет, пробуем загрузить EN
+            const enRes = await fetch('lang/en.json');
+            const enData = await enRes.json();
+            applyLang(enData);
+            return;
+        }
+        
+        const data = await response.json();
+        applyLang(data);
+    } catch (error) {
+        console.error('Ошибка загрузки языка:', error);
     }
 }
 
@@ -37,27 +114,3 @@ function applyLang(data) {
         }
     });
 }
-
-async function init() {
-    const saved = localStorage.getItem('normik-lang') || 'en';
-    currentLang = saved;
-
-    const data = await loadLang(currentLang);
-    applyLang(data);
-
-    document.querySelectorAll('.lang-btn').forEach(btn => {
-        btn.addEventListener('click', async () => {
-            const lang = btn.dataset.lang;
-            currentLang = lang;
-            localStorage.setItem('normik-lang', lang);
-
-            document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
-            btn.classList.add('active');
-
-            const newData = await loadLang(lang);
-            applyLang(newData);
-        });
-    });
-}
-
-init();

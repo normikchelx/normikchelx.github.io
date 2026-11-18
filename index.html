@@ -7,6 +7,16 @@
     <link rel="stylesheet" href="style.css" />
 </head>
 <body>
+    <!-- Панель управления темами -->
+    <div class="theme-controls">
+        <label>Theme:</label>
+        <select id="theme-selector">
+            <option value="system">System</option>
+            <option value="light">Light (#FFFFFF)</option>
+            <option value="dark">Dark (#000000)</option>
+        </select>
+    </div>
+
     <div class="container">
         <div class="avatar-wrapper">
             <img
@@ -19,19 +29,10 @@
 
         <h1 class="main-title" data-i18n="mainTitle">Нормик Чел</h1>
 
-        <div class="lang-switcher">
-            <button data-lang="en" class="lang-btn active">EN</button>
-            <button data-lang="ru" class="lang-btn">RU</button>
-            <button data-lang="uk" class="lang-btn">UK</button>
-            <button data-lang="be" class="lang-btn">BY</button>
-            <button data-lang="tt" class="lang-btn">TT</button>
-            <button data-lang="ba" class="lang-btn">BA</button>
-            <button data-lang="cv" class="lang-btn">CV</button>
-            <button data-lang="ce" class="lang-btn">CE</button>
-            <button data-lang="kv" class="lang-btn">KV</button>
-            <button data-lang="av" class="lang-btn">AV</button>
-            <button data-lang="os" class="lang-btn">OS</button>
-        </div>
+        <!-- Динамический дропдаун языков -->
+        <select id="lang-selector" class="glass-dropdown">
+            <!-- Опции будут добавлены через JS -->
+        </select>
 
         <div class="links-list">
             <a href="https://normik-chel.github.io/" class="link-item" data-i18n="linkWebsite">🌐 Website</a>
