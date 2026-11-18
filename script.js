@@ -1,17 +1,21 @@
 const langConfig = {
-  en: 'English',
-  ru: 'Русский',
-  uk: 'Українська',
-  be: 'Беларуская',
-  kk: 'Қазақша',
-  tt: 'Татарча',
-  ba: 'Башҡортса',
-  cv: 'Чӑвашла',
-  ce: 'Нохчийн',
-  kv: 'Коми',
   av: 'Авар мацӀ',
-  os: 'Ирон ӕвзаг'
+  ba: 'Башҡортса',
+  be: 'Беларуская',
+  ce: 'Нохчийн',
+  cv: 'Чӑвашла',
+  en: 'English',
+  kk: 'Қазақша',
+  kv: 'Коми',
+  os: 'Ирон ӕвзаг',
+  ru: 'Русский',
+  tt: 'Татарча',
+  uk: 'Українська'
 };
+
+const sortedLangs = Object.entries(langConfig).sort(([codeA], [codeB]) =>
+  codeA.localeCompare(codeB)
+);
 
 const themeIcons = {
   system: '🖥️',
@@ -32,6 +36,12 @@ document.addEventListener('DOMContentLoaded', () => {
   initTheme();
   initLanguage();
   initEmailCopy();
+
+  requestAnimationFrame(() => {
+    requestAnimationFrame(() => {
+      document.documentElement.classList.remove('no-transition');
+    });
+  });
 });
 
 function initCustomDropdowns() {
@@ -126,12 +136,13 @@ function initTheme() {
 
 function setTheme(theme) {
   const validTheme = themeIcons[theme] ? theme : 'system';
-  document.body.classList.remove('theme-light', 'theme-dark');
+  const root = document.documentElement;
+  root.classList.remove('theme-light', 'theme-dark');
 
   if (validTheme === 'light') {
-    document.body.classList.add('theme-light');
+    root.classList.add('theme-light');
   } else if (validTheme === 'dark') {
-    document.body.classList.add('theme-dark');
+    root.classList.add('theme-dark');
   }
 
   const iconEl = document.getElementById('theme-current-icon');
@@ -158,7 +169,7 @@ function initLanguage() {
   const langDropdown = document.getElementById('lang-dropdown');
   const langMenu = document.getElementById('lang-menu');
 
-  for (const [code, name] of Object.entries(langConfig)) {
+  for (const [code, name] of sortedLangs) {
     const btn = document.createElement('button');
     btn.type = 'button';
     btn.className = 'dropdown-item';

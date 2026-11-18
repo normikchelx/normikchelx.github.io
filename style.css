@@ -16,7 +16,7 @@
 }
 
 @media (prefers-color-scheme: light) {
-  body:not(.theme-dark) {
+  html:not(.theme-dark) {
     --bg-page: #f0f6ff;
     --surface: rgba(255, 255, 255, 0.78);
     --surface-hover: rgba(255, 255, 255, 0.96);
@@ -34,7 +34,7 @@
   }
 }
 
-body.theme-light {
+html.theme-light {
   --bg-page: #f0f6ff;
   --surface: rgba(255, 255, 255, 0.78);
   --surface-hover: rgba(255, 255, 255, 0.96);
@@ -51,7 +51,7 @@ body.theme-light {
   --orb-opacity: 0.22;
 }
 
-body.theme-dark {
+html.theme-dark {
   --bg-page: #060b19;
   --surface: rgba(15, 25, 50, 0.58);
   --surface-hover: rgba(25, 45, 90, 0.82);
@@ -66,6 +66,11 @@ body.theme-dark {
   --pill-border: rgba(56, 189, 248, 0.35);
   --shadow-card: 0 12px 30px -8px rgba(2, 132, 199, 0.32);
   --orb-opacity: 0.42;
+}
+
+html.no-transition *,
+html.no-transition body {
+  transition: none !important;
 }
 
 * {
@@ -86,7 +91,7 @@ body {
   padding: 24px 16px 48px;
   overflow-x: hidden;
   position: relative;
-  transition: background-color 0.45s cubic-bezier(0.16, 1, 0.3, 1), color 0.35s ease;
+  transition: background-color 0.4s cubic-bezier(0.16, 1, 0.3, 1), color 0.3s ease;
 }
 
 .bg-orbs {
@@ -143,11 +148,11 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
-  animation: fadeUp 0.7s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  animation: fadeUp 0.65s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
 @keyframes fadeUp {
-  from { opacity: 0; transform: translateY(22px); }
+  from { opacity: 0; transform: translateY(18px); }
   to { opacity: 1; transform: translateY(0); }
 }
 
@@ -199,7 +204,6 @@ body {
   gap: 8px;
 }
 
-/* Custom Dropdowns */
 .custom-dropdown {
   position: relative;
 }
@@ -273,8 +277,8 @@ body {
 }
 
 .dropdown-menu.lang-menu {
-  min-width: 205px;
-  max-height: 290px;
+  min-width: 210px;
+  max-height: 295px;
   overflow-y: auto;
   scrollbar-width: thin;
   scrollbar-color: var(--border-strong) transparent;
@@ -295,7 +299,6 @@ body {
   transform: translateY(0) scale(1);
 }
 
-/* Gliding Hover Pill */
 .hover-pill {
   position: absolute;
   left: 6px;
@@ -350,6 +353,8 @@ body {
   background: rgba(56, 189, 248, 0.14);
   color: var(--accent);
   letter-spacing: 0.4px;
+  min-width: 28px;
+  text-align: center;
 }
 
 .dropdown-item.active {
@@ -364,7 +369,6 @@ body {
   color: var(--accent);
 }
 
-/* Profile */
 .profile {
   display: flex;
   flex-direction: column;
@@ -444,7 +448,6 @@ body {
   color: var(--accent);
 }
 
-/* Link Cards */
 .links-list {
   width: 100%;
   display: flex;

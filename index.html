@@ -1,17 +1,27 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="no-transition">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title data-i18n="pageTitle">Normik Chel — Links</title>
+  <link rel="icon" type="image/jpeg" href="https://pbs.twimg.com/profile_images/1883230717733130240/-bKzb0RZ_400x400.jpg" />
   <script>
     (function () {
-      const theme = localStorage.getItem('normik-theme') || 'system';
-      if (theme === 'light' || theme === 'dark') {
-        document.documentElement.classList.add('theme-' + theme);
-      }
+      try {
+        var theme = localStorage.getItem('normik-theme') || 'system';
+        if (theme === 'light' || theme === 'dark') {
+          document.documentElement.classList.add('theme-' + theme);
+        }
+        var lang = localStorage.getItem('normik-lang');
+        if (lang) {
+          document.documentElement.lang = lang;
+        }
+      } catch (e) {}
     })();
   </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
@@ -40,10 +50,9 @@
       </a>
 
       <div class="controls">
-        <!-- Custom Theme Dropdown -->
         <div class="custom-dropdown" id="theme-dropdown" data-type="theme">
           <button type="button" class="dropdown-trigger" aria-haspopup="listbox" aria-expanded="false">
-            <span class="trigger-icon" id="theme-current-icon"></span>
+            <span class="trigger-icon" id="theme-current-icon">🖥️</span>
             <span class="trigger-label" id="theme-current-label" data-i18n="systemTitle">System</span>
             <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
               <polyline points="6 9 12 15 18 9"></polyline>
@@ -52,21 +61,26 @@
           <div class="dropdown-menu" role="listbox">
             <div class="hover-pill"></div>
             <button type="button" class="dropdown-item active" role="option" data-value="system">
-              <span class="item-icon">🖥️</span>
-              <span class="item-text" data-i18n="systemTitle">System</span>
+              <span class="dropdown-item-left">
+                <span class="item-icon">🖥️</span>
+                <span class="item-text" data-i18n="systemTitle">System</span>
+              </span>
             </button>
             <button type="button" class="dropdown-item" role="option" data-value="light">
-              <span class="item-icon">☀️</span>
-              <span class="item-text" data-i18n="lightTitle">Light</span>
+              <span class="dropdown-item-left">
+                <span class="item-icon">☀️</span>
+                <span class="item-text" data-i18n="lightTitle">Light</span>
+              </span>
             </button>
             <button type="button" class="dropdown-item" role="option" data-value="dark">
-              <span class="item-icon">🌙</span>
-              <span class="item-text" data-i18n="darkTitle">Dark</span>
+              <span class="dropdown-item-left">
+                <span class="item-icon">🌙</span>
+                <span class="item-text" data-i18n="darkTitle">Dark</span>
+              </span>
             </button>
           </div>
         </div>
 
-        <!-- Custom Language Dropdown -->
         <div class="custom-dropdown" id="lang-dropdown" data-type="lang">
           <button type="button" class="dropdown-trigger" aria-haspopup="listbox" aria-expanded="false">
             <span class="trigger-icon">🌐</span>
