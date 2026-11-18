@@ -1,57 +1,50 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Нормик Чел</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f4;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            background-image: linear-gradient(to bottom, #ffffff, #f0f0f0);
-        }
-        .links {
-            text-align: center;
-            width: 100%;
-            max-width: 600px;
-            background: #fff;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        }
-        .links a {
-            display: block;
-            margin: 10px 0;
-            text-decoration: none;
-            color: #000;
-            transition: color 0.3s ease;
-        }
-        .links a:hover {
-            color: #007bff;
-        }
-        img {
-            max-width: 100%;
-            height: auto;
-            display: block;
-            margin: 0 auto;
-        }
-    </style>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title data-i18n="pageTitle">Normik Chel — Links</title>
+    <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-    <div class="links">
-        <h1>Нормик Чел</h1>
-        <a href="https://normik-chel.github.io/">🌐 English: Normik Chel</a>
-        <a href="https://www.youtube.com/channel/UCkpmUHi3zRQVmhLQ3N">🌐 YouTube Channel</a>
-        <a href="https://bsky.app/profile/normikchel.github.io">🌐 Bluesky Profile</a>
-        <a href="https://Instagram.com/normikchelik">🌐 Instagram</a>
-        <a href="mailto:nenormikchel@gmail.com">🌐 Email: nenormikchel@gmail.com</a>
-        <a href="https://vero.co/normikchel">🌐 Vero Profile</a>
-        <img src="https://pbs.twimg.com/profile_images/1883230717733130240/-bKzb0RZ_400x400.jpg" alt="Нормик Чел">
+    <div class="container">
+        <div class="avatar-wrapper">
+            <img
+                src="https://pbs.twimg.com/profile_images/1883230717733130240/-bKzb0RZ_400x400.jpg"
+                alt="Avatar"
+                class="avatar"
+                loading="lazy"
+            />
+        </div>
+
+        <h1 class="main-title" data-i18n="mainTitle">Нормик Чел</h1>
+
+        <div class="lang-switcher">
+            <button data-lang="en" class="lang-btn active">EN</button>
+            <button data-lang="ru" class="lang-btn">RU</button>
+            <button data-lang="uk" class="lang-btn">UK</button>
+            <button data-lang="be" class="lang-btn">BY</button>
+            <button data-lang="tt" class="lang-btn">TT</button>
+            <button data-lang="ba" class="lang-btn">BA</button>
+            <button data-lang="cv" class="lang-btn">CV</button>
+            <button data-lang="ce" class="lang-btn">CE</button>
+            <button data-lang="kv" class="lang-btn">KV</button>
+            <button data-lang="av" class="lang-btn">AV</button>
+            <button data-lang="os" class="lang-btn">OS</button>
+        </div>
+
+        <div class="links-list">
+            <a href="https://normik-chel.github.io/" class="link-item" data-i18n="linkWebsite">🌐 Website</a>
+            <a href="https://www.youtube.com/channel/UCkpmUHi3zRQVmhLQ3N" class="link-item" data-i18n="linkYoutube">🎬 YouTube Channel</a>
+            <a href="https://bsky.app/profile/normikchel.github.io" class="link-item" data-i18n="linkBluesky">🐦 Bluesky Profile</a>
+            <a href="https://instagram.com/normikchelik" class="link-item" data-i18n="linkInstagram">📷 Instagram</a>
+            <a href="mailto:nenormikchel@gmail.com" class="link-item" data-i18n="linkEmail">📧 Email</a>
+            <a href="https://vero.co/normikchel" class="link-item" data-i18n="linkVero">🖼️ Vero Profile</a>
+        </div>
+
+        <footer class="footer" data-i18n="footer">© 2024 Normik Chel</footer>
     </div>
+
+    <script src="script.js"></script>
 </body>
 </html>
