@@ -1,116 +1,258 @@
-// Конфигурация языков
-// Ключи - это коды языков (be, ru, en и т.д.)
-// Значения - это отображаемые названия в дропдауне
 const langConfig = {
-    en: 'English',
-    ru: 'Русский',
-    uk: 'Українська',
-    be: 'Беларуская', // Исправлено с BY на BE
-    tt: 'Татарча',
-    ba: 'Башҡортса',
-    cv: 'Чӑвашла',
-    ce: 'Нохчийн',
-    kv: 'Коми',
-    av: 'Авар мацӀ',
-    os: 'Ирон ӕвзаг'
+  en: 'English',
+  ru: 'Русский',
+  uk: 'Українська',
+  be: 'Беларуская',
+  kk: 'Қазақша',
+  tt: 'Татарча',
+  ba: 'Башҡортса',
+  cv: 'Чӑвашла',
+  ce: 'Нохчийн',
+  kv: 'Коми',
+  av: 'Авар мацӀ',
+  os: 'Ирон ӕвзаг'
 };
 
-// Инициализация при загрузке
+const themeIcons = {
+  system: '🖥️',
+  light: '☀️',
+  dark: '🌙'
+};
+
+const themeKeyMap = {
+  system: 'systemTitle',
+  light: 'lightTitle',
+  dark: 'darkTitle'
+};
+
+let currentLangData = {};
+
 document.addEventListener('DOMContentLoaded', () => {
-    initTheme();
-    initLanguage();
+  initCustomDropdowns();
+  initTheme();
+  initLanguage();
+  initEmailCopy();
 });
 
-// --- ЛОГИКА ТЕМ ---
-function initTheme() {
-    const savedTheme = localStorage.getItem('normik-theme') || 'system';
-    setTheme(savedTheme);
-    
-    const themeSelector = document.getElementById('theme-selector');
-    if (themeSelector) {
-        themeSelector.value = savedTheme;
-        themeSelector.addEventListener('change', (e) => {
-            const selected = e.target.value;
-            localStorage.setItem('normik-theme', selected);
-            setTheme(selected);
-        });
+function initCustomDropdowns() {
+  const dropdowns = document.querySelectorAll('.custom-dropdown');
+
+  dropdowns.forEach(dropdown => {
+    const trigger = dropdown.querySelector('.dropdown-trigger');
+    const menu = dropdown.querySelector('.dropdown-menu');
+    const pill = menu.querySelector('.hover-pill');
+
+    trigger.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const isOpen = dropdown.classList.contains('open');
+
+      dropdowns.forEach(d => {
+        d.classList.remove('open');
+        d.querySelector('.dropdown-trigger').setAttribute('aria-expanded', 'false');
+      });
+
+      if (!isOpen) {
+        dropdown.classList.add('open');
+        trigger.setAttribute('aria-expanded', 'true');
+        const activeItem = menu.querySelector('.dropdown-item.active');
+        if (activeItem) {
+          movePillToItem(menu, pill, activeItem);
+        }
+      }
+    });
+
+    menu.addEventListener('mouseover', (e) => {
+      const item = e.target.closest('.dropdown-item');
+      if (item && menu.contains(item)) {
+        movePillToItem(menu, pill, item);
+      }
+    });
+
+    menu.addEventListener('mouseleave', () => {
+      const activeItem = menu.querySelector('.dropdown-item.active');
+      if (activeItem) {
+        movePillToItem(menu, pill, activeItem);
+      } else {
+        pill.style.opacity = '0';
+      }
+    });
+  });
+
+  document.addEventListener('click', (e) => {
+    if (!e.target.closest('.custom-dropdown')) {
+      dropdowns.forEach(d => {
+        d.classList.remove('open');
+        d.querySelector('.dropdown-trigger').setAttribute('aria-expanded', 'false');
+      });
     }
+  });
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+      dropdowns.forEach(d => {
+        d.classList.remove('open');
+        d.querySelector('.dropdown-trigger').setAttribute('aria-expanded', 'false');
+      });
+    }
+  });
+}
+
+function movePillToItem(menu, pill, item) {
+  if (!pill || !item) return;
+  const top = item.offsetTop;
+  const height = item.offsetHeight;
+  pill.style.height = `${height}px`;
+  pill.style.transform = `translateY(${top}px)`;
+  pill.style.opacity = '1';
+}
+
+function initTheme() {
+  const savedTheme = localStorage.getItem('normik-theme') || 'system';
+  const themeDropdown = document.getElementById('theme-dropdown');
+  const items = themeDropdown.querySelectorAll('.dropdown-item');
+
+  setTheme(savedTheme);
+
+  items.forEach(item => {
+    item.addEventListener('click', () => {
+      const selected = item.dataset.value;
+      localStorage.setItem('normik-theme', selected);
+      setTheme(selected);
+      themeDropdown.classList.remove('open');
+      themeDropdown.querySelector('.dropdown-trigger').setAttribute('aria-expanded', 'false');
+    });
+  });
 }
 
 function setTheme(theme) {
-    const body = document.body;
-    body.className = ''; // Сброс классов
-    
-    if (theme === 'light') {
-        body.classList.add('theme-light');
-    } else if (theme === 'dark') {
-        body.classList.add('theme-dark');
+  const validTheme = themeIcons[theme] ? theme : 'system';
+  document.body.classList.remove('theme-light', 'theme-dark');
+
+  if (validTheme === 'light') {
+    document.body.classList.add('theme-light');
+  } else if (validTheme === 'dark') {
+    document.body.classList.add('theme-dark');
+  }
+
+  const iconEl = document.getElementById('theme-current-icon');
+  const labelEl = document.getElementById('theme-current-label');
+  const i18nKey = themeKeyMap[validTheme];
+
+  if (iconEl) iconEl.textContent = themeIcons[validTheme];
+  if (labelEl) {
+    labelEl.setAttribute('data-i18n', i18nKey);
+    if (currentLangData[i18nKey]) {
+      labelEl.textContent = currentLangData[i18nKey];
     }
-    // Если 'system', классы не добавляем, работают медиа-запросы CSS
+  }
+
+  const themeDropdown = document.getElementById('theme-dropdown');
+  themeDropdown.querySelectorAll('.dropdown-item').forEach(btn => {
+    btn.classList.toggle('active', btn.dataset.value === validTheme);
+  });
 }
 
-// --- ЛОГИКА ЯЗЫКОВ ---
 function initLanguage() {
-    const savedLang = localStorage.getItem('normik-lang') || 'en';
-    const langSelector = document.getElementById('lang-selector');
-    
-    // 1. Динамическое заполнение дропдауна
-    if (langSelector) {
-        for (const [code, name] of Object.entries(langConfig)) {
-            const option = document.createElement('option');
-            option.value = code;
-            option.textContent = `${code.toUpperCase()} - ${name}`;
-            langSelector.appendChild(option);
-        }
-        langSelector.value = savedLang;
-        
-        // 2. Обработка смены языка
-        langSelector.addEventListener('change', async (e) => {
-            const selectedLang = e.target.value;
-            localStorage.setItem('normik-lang', selectedLang);
-            
-            // 3. Смена атрибута lang в HTML
-            document.documentElement.lang = selectedLang;
-            
-            // 4. Загрузка и применение перевода
-            await loadAndApplyLang(selectedLang);
-        });
-    }
-    
-    // Загрузка начального языка
-    loadAndApplyLang(savedLang);
+  const savedLang = localStorage.getItem('normik-lang') || 'en';
+  const initialLang = langConfig[savedLang] ? savedLang : 'en';
+  const langDropdown = document.getElementById('lang-dropdown');
+  const langMenu = document.getElementById('lang-menu');
+
+  for (const [code, name] of Object.entries(langConfig)) {
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'dropdown-item';
+    btn.setAttribute('role', 'option');
+    btn.dataset.value = code;
+    if (code === initialLang) btn.classList.add('active');
+
+    btn.innerHTML = `
+      <span class="dropdown-item-left">
+        <span class="lang-code-badge">${code.toUpperCase()}</span>
+        <span>${name}</span>
+      </span>
+    `;
+
+    btn.addEventListener('click', async () => {
+      localStorage.setItem('normik-lang', code);
+      updateLangUI(code);
+      langDropdown.classList.remove('open');
+      langDropdown.querySelector('.dropdown-trigger').setAttribute('aria-expanded', 'false');
+      await loadAndApplyLang(code);
+    });
+
+    langMenu.appendChild(btn);
+  }
+
+  updateLangUI(initialLang);
+  loadAndApplyLang(initialLang);
+}
+
+function updateLangUI(code) {
+  document.documentElement.lang = code;
+  const labelEl = document.getElementById('lang-current-label');
+  if (labelEl) {
+    labelEl.textContent = code.toUpperCase();
+  }
+
+  const langMenu = document.getElementById('lang-menu');
+  langMenu.querySelectorAll('.dropdown-item').forEach(btn => {
+    btn.classList.toggle('active', btn.dataset.value === code);
+  });
 }
 
 async function loadAndApplyLang(lang) {
-    try {
-        // Формируем путь к файлу
-        const response = await fetch(`lang/\${lang}.json`);
-        
-        if (!response.ok) {
-            console.warn(`Файл перевода для \${lang} не найден, используем EN.`);
-            // Если файла нет, пробуем загрузить EN
-            const enRes = await fetch('lang/en.json');
-            const enData = await enRes.json();
-            applyLang(enData);
-            return;
+  try {
+    const response = await fetch(`lang/${lang}.json`);
+
+    if (!response.ok) {
+      console.warn(`Translation file for ${lang} not found, falling back to EN.`);
+      if (lang !== 'en') {
+        const enRes = await fetch('lang/en.json');
+        if (enRes.ok) {
+          const enData = await enRes.json();
+          applyLang(enData);
         }
-        
-        const data = await response.json();
-        applyLang(data);
-    } catch (error) {
-        console.error('Ошибка загрузки языка:', error);
+      }
+      return;
     }
+
+    const data = await response.json();
+    applyLang(data);
+  } catch (error) {
+    console.error('Error loading language file:', error);
+  }
 }
 
 function applyLang(data) {
-    document.querySelectorAll('[data-i18n]').forEach(el => {
-        const key = el.getAttribute('data-i18n');
-        if (data[key]) {
-            if (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA') {
-                el.value = data[key];
-            } else {
-                el.textContent = data[key];
-            }
-        }
-    });
+  currentLangData = data;
+  if (data.pageTitle) {
+    document.title = data.pageTitle;
+  }
+
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    const key = el.getAttribute('data-i18n');
+    if (data[key]) {
+      if (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA') {
+        el.value = data[key];
+      } else {
+        el.textContent = data[key];
+      }
+    }
+  });
+}
+
+function initEmailCopy() {
+  const emailCard = document.getElementById('email-card');
+  const toast = document.getElementById('toast');
+  if (!emailCard || !toast) return;
+
+  emailCard.addEventListener('click', () => {
+    if (navigator.clipboard) {
+      navigator.clipboard.writeText('nenormikchel@gmail.com').then(() => {
+        toast.classList.add('show');
+        setTimeout(() => toast.classList.remove('show'), 2500);
+      });
+    }
+  });
 }
