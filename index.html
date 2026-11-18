@@ -7,16 +7,21 @@
   <link rel="icon" type="image/jpeg" href="https://pbs.twimg.com/profile_images/1883230717733130240/-bKzb0RZ_400x400.jpg" />
   <script>
     (function () {
-      try {
-        var theme = localStorage.getItem('normik-theme') || 'system';
-        if (theme === 'light' || theme === 'dark') {
-          document.documentElement.classList.add('theme-' + theme);
-        }
-        var lang = localStorage.getItem('normik-lang');
-        if (lang) {
-          document.documentElement.lang = lang;
-        }
-      } catch (e) {}
+      var root = document.documentElement;
+      var theme = localStorage.getItem('normik-theme') || 'system';
+      if (theme === 'light' || theme === 'dark') {
+        root.classList.add('theme-' + theme);
+      }
+      var lang = localStorage.getItem('normik-lang') || 'en';
+      var rtlLangs = ['ks', 'sd', 'ug', 'ur'];
+      if (rtlLangs.indexOf(lang) !== -1) {
+        root.dir = 'rtl';
+      } else {
+        root.dir = 'ltr';
+      }
+      if (lang === 'mn-Mong') {
+        root.classList.add('lang-vertical');
+      }
     })();
   </script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -34,23 +39,23 @@
   <div class="container">
     <header class="top-bar">
       <a href="#" class="brand-logo">
-        <svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <path d="M20 3L35 11.5V28.5L20 37L5 28.5V11.5L20 3Z" fill="url(#cubeGrad1)" stroke="currentColor" stroke-width="1.8"/>
-          <path d="M20 3L35 11.5L20 20L5 11.5L20 3Z" fill="currentColor" fill-opacity="0.25"/>
-          <path d="M20 20V37L5 28.5V11.5L20 20Z" fill="currentColor" fill-opacity="0.38"/>
+        <svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <path d="M20 3L35 11.5V28.5L20 37L5 28.5V11.5L20 3Z" fill="url(#cubeGrad)" stroke="currentColor" stroke-width="1.8"/>
+          <path d="M20 3L35 11.5L20 20L5 11.5L20 3Z" fill="currentColor" fill-opacity="0.3"/>
+          <path d="M20 20V37L5 28.5V11.5L20 20Z" fill="currentColor" fill-opacity="0.18"/>
           <path d="M14 24V15L26 24V15" stroke="#ffffff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>
           <defs>
-            <linearGradient id="cubeGrad1" x1="5" y1="3" x2="35" y2="37" gradientUnits="userSpaceOnUse">
+            <linearGradient id="cubeGrad" x1="5" y1="3" x2="35" y2="37" gradientUnits="userSpaceOnUse">
               <stop stop-color="#0f172a"/>
               <stop offset="1" stop-color="#1e3a8a"/>
             </linearGradient>
           </defs>
         </svg>
-        <span>NORMIKCHEL</span>
+        <span class="brand-text">NORMIKCHEL</span>
       </a>
 
       <div class="controls">
-        <div class="custom-dropdown" id="theme-dropdown" data-type="theme">
+        <div class="custom-dropdown" id="theme-dropdown">
           <button type="button" class="dropdown-trigger" aria-haspopup="listbox" aria-expanded="false">
             <span class="trigger-icon" id="theme-current-icon">🖥️</span>
             <span class="trigger-label" id="theme-current-label" data-i18n="systemTitle">System</span>
@@ -60,28 +65,28 @@
           </button>
           <div class="dropdown-menu" role="listbox">
             <div class="hover-pill"></div>
-            <button type="button" class="dropdown-item active" role="option" data-value="system">
+            <button type="button" class="dropdown-item" role="option" data-value="system">
               <span class="dropdown-item-left">
-                <span class="item-icon">🖥️</span>
-                <span class="item-text" data-i18n="systemTitle">System</span>
+                <span>🖥️</span>
+                <span data-i18n="systemTitle">System</span>
               </span>
             </button>
             <button type="button" class="dropdown-item" role="option" data-value="light">
               <span class="dropdown-item-left">
-                <span class="item-icon">☀️</span>
-                <span class="item-text" data-i18n="lightTitle">Light</span>
+                <span>☀️</span>
+                <span data-i18n="lightTitle">Light</span>
               </span>
             </button>
             <button type="button" class="dropdown-item" role="option" data-value="dark">
               <span class="dropdown-item-left">
-                <span class="item-icon">🌙</span>
-                <span class="item-text" data-i18n="darkTitle">Dark</span>
+                <span>🌙</span>
+                <span data-i18n="darkTitle">Dark</span>
               </span>
             </button>
           </div>
         </div>
 
-        <div class="custom-dropdown" id="lang-dropdown" data-type="lang">
+        <div class="custom-dropdown" id="lang-dropdown">
           <button type="button" class="dropdown-trigger" aria-haspopup="listbox" aria-expanded="false">
             <span class="trigger-icon">🌐</span>
             <span class="trigger-label" id="lang-current-label">EN</span>
@@ -101,25 +106,25 @@
         <div class="avatar-ring"></div>
         <img
           src="https://pbs.twimg.com/profile_images/1883230717733130240/-bKzb0RZ_400x400.jpg"
-          alt="Normik Chel Avatar"
+          alt="Normik Chel"
           class="avatar-img"
         />
-        <span class="status-badge" title="Online"></span>
+        <span class="status-badge"></span>
       </div>
 
       <h1 class="profile-name">
         <span data-i18n="mainTitle">Normik Chel</span>
-        <svg class="verified-icon" viewBox="0 0 24 24" fill="currentColor">
+        <svg class="verified-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
           <path d="M22.5 12.5c0-1.58-.875-2.95-2.148-3.6.154-.435.238-.905.238-1.4 0-2.21-1.71-3.998-3.818-3.998-.47 0-.92.084-1.336.25C14.818 2.415 13.51 1.5 12 1.5s-2.816.917-3.437 2.25c-.415-.165-.866-.25-1.336-.25-2.11 0-3.818 1.79-3.818 4 0 .494.083.964.237 1.4-1.272.65-2.147 2.018-2.147 3.6 0 1.495.782 2.798 1.942 3.486-.02.17-.032.34-.032.514 0 2.21 1.708 4 3.818 4 .47 0 .92-.086 1.335-.25.62 1.334 1.926 2.25 3.437 2.25 1.512 0 2.818-.916 3.437-2.25.415.163.865.248 1.336.248 2.11 0 3.818-1.79 3.818-4 0-.174-.012-.344-.033-.513 1.158-.687 1.943-1.99 1.943-3.484zm-6.616-3.334l-4.334 6.5c-.145.217-.382.334-.625.334-.143 0-.288-.04-.416-.126l-.115-.094-2.415-2.415c-.293-.293-.293-.768 0-1.06s.768-.294 1.06 0l1.77 1.767 3.825-5.74c.23-.345.696-.436 1.04-.207.346.23.44.696.21 1.04z"/>
         </svg>
       </h1>
-      <div class="profile-handle">@normikchel</div>
+      <div class="profile-handle" dir="ltr">@normikchel</div>
     </section>
 
     <main class="links-list">
       <a href="https://normik-chel.github.io/" target="_blank" rel="noopener noreferrer" class="link-card">
         <div class="link-left">
-          <div class="icon-box icon-web">
+          <div class="icon-box">
             <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <circle cx="12" cy="12" r="10"></circle>
               <line x1="2" y1="12" x2="22" y2="12"></line>
@@ -128,7 +133,7 @@
           </div>
           <div class="link-info">
             <span class="link-title" data-i18n="linkWebsite">🌐 Website</span>
-            <span class="link-sub">normik-chel.github.io</span>
+            <span class="link-sub" dir="ltr">normik-chel.github.io</span>
           </div>
         </div>
         <svg class="arrow-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
@@ -146,7 +151,7 @@
           </div>
           <div class="link-info">
             <span class="link-title" data-i18n="linkYoutube">🎬 YouTube Channel</span>
-            <span class="link-sub">youtube.com/@normikchel</span>
+            <span class="link-sub" dir="ltr">youtube.com/@normikchel</span>
           </div>
         </div>
         <svg class="arrow-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
@@ -164,7 +169,7 @@
           </div>
           <div class="link-info">
             <span class="link-title" data-i18n="linkBluesky">🐦 Bluesky Profile</span>
-            <span class="link-sub">@normikchel.github.io</span>
+            <span class="link-sub" dir="ltr">@normikchel.github.io</span>
           </div>
         </div>
         <svg class="arrow-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
@@ -184,7 +189,7 @@
           </div>
           <div class="link-info">
             <span class="link-title" data-i18n="linkInstagram">📷 Instagram</span>
-            <span class="link-sub">@normikchelik</span>
+            <span class="link-sub" dir="ltr">@normikchelik</span>
           </div>
         </div>
         <svg class="arrow-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
@@ -202,7 +207,7 @@
           </div>
           <div class="link-info">
             <span class="link-title" data-i18n="linkVero">🖼️ Vero Profile</span>
-            <span class="link-sub">vero.co/normikchel</span>
+            <span class="link-sub" dir="ltr">vero.co/normikchel</span>
           </div>
         </div>
         <svg class="arrow-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
@@ -221,7 +226,7 @@
           </div>
           <div class="link-info">
             <span class="link-title" data-i18n="linkEmail">📧 Email</span>
-            <span class="link-sub">nenormikchel@gmail.com</span>
+            <span class="link-sub" dir="ltr">nenormikchel@gmail.com</span>
           </div>
         </div>
         <svg class="arrow-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
@@ -236,7 +241,7 @@
     </footer>
   </div>
 
-  <div class="toast" id="toast">nenormikchel@gmail.com</div>
+  <div class="toast" id="toast" dir="ltr">nenormikchel@gmail.com</div>
 
   <script src="script.js"></script>
 </body>

@@ -52,6 +52,8 @@ const langConfig = {
   'zh-TW': '國語'
 };
 
+const rtlLangs = new Set(['ks', 'sd', 'ug', 'ur']);
+
 const sortedLangs = Object.entries(langConfig).sort(([codeA], [codeB]) =>
   codeA.localeCompare(codeB)
 );
@@ -216,10 +218,12 @@ function initLanguage() {
     btn.dataset.value = code;
     if (code === initialLang) btn.classList.add('active');
 
+    const nameClass = code === 'mn-Mong' ? ' class="lang-native-vertical"' : '';
+
     btn.innerHTML = `
       <span class="dropdown-item-left">
         <span class="lang-code-badge">${code.toUpperCase()}</span>
-        <span>${name}</span>
+        <span${nameClass}>${name}</span>
       </span>
     `;
 
@@ -239,7 +243,11 @@ function initLanguage() {
 }
 
 function updateLangUI(code) {
-  document.documentElement.lang = code;
+  const root = document.documentElement;
+  root.lang = code;
+  root.dir = rtlLangs.has(code) ? 'rtl' : 'ltr';
+  root.classList.toggle('lang-vertical', code === 'mn-Mong');
+
   const labelEl = document.getElementById('lang-current-label');
   if (labelEl) {
     labelEl.textContent = code.toUpperCase();
@@ -253,12 +261,12 @@ function updateLangUI(code) {
 
 async function loadAndApplyLang(lang) {
   try {
-    const response = await fetch(`lang/${lang}.json?v=4`);
+    const response = await fetch(`lang/${lang}.json?v=5`);
 
     if (!response.ok) {
       console.warn(`Translation file for ${lang} not found, falling back to EN.`);
       if (lang !== 'en') {
-        const enRes = await fetch('lang/en.json?v=4');
+        const enRes = await fetch('lang/en.json?v=5');
         if (enRes.ok) {
           const enData = await enRes.json();
           applyLang(enData);
