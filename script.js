@@ -52,6 +52,11 @@ const langConfig = {
   'zh-TW': '國語'
 };
 
+const STORAGE_KEYS = {
+  USER_SELECTED_LANG: 'normik-lang',
+  LAST_BROWSER_LANG: 'LAST_BROWSER_LANG'
+};
+
 const rtlLangs = new Set(['ks', 'sd', 'ug', 'ur']);
 
 const sortedLangs = Object.entries(langConfig).sort(([codeA], [codeB]) =>
@@ -72,46 +77,81 @@ const themeKeyMap = {
 
 let currentLangData = {};
 
-function detectBrowserLanguage() {
+function matchSupportedLang(raw) {
+  if (!raw || typeof raw !== 'string') return null;
+
+  const configKeys = Object.keys(langConfig);
+  const lowerMap = new Map(configKeys.map(k => [k.toLowerCase(), k]));
+  const normalized = raw.trim().replace(/_/g, '-');
+  const lower = normalized.toLowerCase();
+
+  if (lowerMap.has(lower)) {
+    return lowerMap.get(lower);
+  }
+
+  if (lower.startsWith('zh')) {
+    if (lower.includes('tw') || lower.includes('hk') || lower.includes('mo') || lower.includes('hant')) {
+      if (lowerMap.has('zh-tw')) return 'zh-TW';
+    }
+    if (lower.includes('sg') || lower.includes('my')) {
+      if (lowerMap.has('zh-sg')) return 'zh-SG';
+    }
+    if (lowerMap.has('zh-cn')) return 'zh-CN';
+  }
+
+  if (lower.startsWith('mn')) {
+    if (lower.includes('mong') && lowerMap.has('mn-mong')) {
+      return 'mn-Mong';
+    }
+  }
+
+  const baseCode = lower.split('-')[0];
+  if (lowerMap.has(baseCode)) {
+    return lowerMap.get(baseCode);
+  }
+
+  return null;
+}
+
+function getBrowserLanguage() {
   const rawLangs = Array.isArray(navigator.languages) && navigator.languages.length > 0
     ? navigator.languages
     : [navigator.language || navigator.userLanguage || 'en'];
 
-  const configKeys = Object.keys(langConfig);
-  const lowerMap = new Map(configKeys.map(k => [k.toLowerCase(), k]));
-
   for (const raw of rawLangs) {
-    if (!raw || typeof raw !== 'string') continue;
-    const normalized = raw.trim().replace(/_/g, '-');
-    const lower = normalized.toLowerCase();
-
-    if (lowerMap.has(lower)) {
-      return lowerMap.get(lower);
-    }
-
-    if (lower.startsWith('zh')) {
-      if (lower.includes('tw') || lower.includes('hk') || lower.includes('mo') || lower.includes('hant')) {
-        if (lowerMap.has('zh-tw')) return 'zh-TW';
-      }
-      if (lower.includes('sg') || lower.includes('my')) {
-        if (lowerMap.has('zh-sg')) return 'zh-SG';
-      }
-      if (lowerMap.has('zh-cn')) return 'zh-CN';
-    }
-
-    if (lower.startsWith('mn')) {
-      if (lower.includes('mong') && lowerMap.has('mn-mong')) {
-        return 'mn-Mong';
-      }
-    }
-
-    const baseCode = lower.split('-')[0];
-    if (lowerMap.has(baseCode)) {
-      return lowerMap.get(baseCode);
-    }
+    const matched = matchSupportedLang(raw);
+    if (matched) return matched;
   }
 
   return 'en';
+}
+
+function resolveInitialLanguage() {
+  const currentBrowserLang = getBrowserLanguage();
+  const lastBrowserLang = localStorage.getItem(STORAGE_KEYS.LAST_BROWSER_LANG);
+  const savedUserLang = matchSupportedLang(localStorage.getItem(STORAGE_KEYS.USER_SELECTED_LANG));
+
+  // Логика GETTR (LAST_BROWSER_LANG):
+  // 1. Если язык браузера изменился с прошлого визита — сбрасываем ручной выбор и ставим новый язык браузера.
+  if (lastBrowserLang && lastBrowserLang !== currentBrowserLang) {
+    localStorage.setItem(STORAGE_KEYS.LAST_BROWSER_LANG, currentBrowserLang);
+    localStorage.setItem(STORAGE_KEYS.USER_SELECTED_LANG, currentBrowserLang);
+    return currentBrowserLang;
+  }
+
+  // 2. Фиксируем текущий язык браузера, если его ещё не было
+  if (!lastBrowserLang) {
+    localStorage.setItem(STORAGE_KEYS.LAST_BROWSER_LANG, currentBrowserLang);
+  }
+
+  // 3. Если юзер уже выбирал язык вручную и язык браузера не менялся — уважаем его выбор
+  if (savedUserLang) {
+    return savedUserLang;
+  }
+
+  // 4. По умолчанию ставим язык браузера (или 'en' если язык не поддерживается)
+  localStorage.setItem(STORAGE_KEYS.USER_SELECTED_LANG, currentBrowserLang);
+  return currentBrowserLang;
 }
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -247,8 +287,7 @@ function setTheme(theme) {
 }
 
 function initLanguage() {
-  const initialLang = detectBrowserLanguage();
-  localStorage.removeItem('normik-lang');
+  const initialLang = resolveInitialLanguage();
   const langDropdown = document.getElementById('lang-dropdown');
   const langMenu = document.getElementById('lang-menu');
 
@@ -270,6 +309,7 @@ function initLanguage() {
     `;
 
     btn.addEventListener('click', async () => {
+      localStorage.setItem(STORAGE_KEYS.USER_SELECTED_LANG, code);
       updateLangUI(code);
       langDropdown.classList.remove('open');
       langDropdown.querySelector('.dropdown-trigger').setAttribute('aria-expanded', 'false');
@@ -281,6 +321,15 @@ function initLanguage() {
 
   updateLangUI(initialLang);
   loadAndApplyLang(initialLang);
+
+  // Реакция на смену языка в браузере «на лету» (как в GETTR)
+  window.addEventListener('languagechange', async () => {
+    const updatedBrowserLang = getBrowserLanguage();
+    localStorage.setItem(STORAGE_KEYS.LAST_BROWSER_LANG, updatedBrowserLang);
+    localStorage.setItem(STORAGE_KEYS.USER_SELECTED_LANG, updatedBrowserLang);
+    updateLangUI(updatedBrowserLang);
+    await loadAndApplyLang(updatedBrowserLang);
+  });
 }
 
 function updateLangUI(code) {
