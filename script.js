@@ -279,6 +279,20 @@ function resolveInitialLanguage() {
   return currentBrowserLang;
 }
 
+/* =========================================================
+   4. ДИНАМИЧЕСКИЙ ГОД (2027 С ЗАПАСОМ И АВТООБНОВЛЕНИЕМ)
+   ========================================================= */
+function updateCopyrightYear() {
+  const targetYear = Math.max(2027, new Date().getFullYear());
+  document.querySelectorAll('[data-year], .copyright-year, footer').forEach(el => {
+    if (el.hasAttribute('data-year') || el.classList.contains('copyright-year')) {
+      el.textContent = String(targetYear);
+    } else if (el.tagName === 'FOOTER') {
+      el.innerHTML = el.innerHTML.replace(/202[0-6]/g, String(targetYear));
+    }
+  });
+}
+
 document.addEventListener('DOMContentLoaded', () => {
   TopBar.init();
   initLenis();
@@ -286,6 +300,7 @@ document.addEventListener('DOMContentLoaded', () => {
   initTheme();
   initLanguage();
   initEmailCopy();
+  updateCopyrightYear();
 
   requestAnimationFrame(() => {
     requestAnimationFrame(() => {
@@ -302,7 +317,6 @@ function initCustomDropdowns() {
     const menu = dropdown.querySelector('.dropdown-menu');
     const pill = menu.querySelector('.hover-pill');
 
-    // Останавливаем перехват скролла Lenis внутри длинного меню языков
     menu.setAttribute('data-lenis-prevent', '');
 
     trigger.addEventListener('click', (e) => {
@@ -506,20 +520,25 @@ async function loadAndApplyLang(lang) {
 
 function applyLang(data) {
   currentLangData = data;
+  const targetYear = Math.max(2027, new Date().getFullYear());
+
   if (data.pageTitle) {
-    document.title = data.pageTitle;
+    document.title = data.pageTitle.replace(/202[0-6]/g, String(targetYear));
   }
 
   document.querySelectorAll('[data-i18n]').forEach(el => {
     const key = el.getAttribute('data-i18n');
     if (data[key]) {
+      const value = String(data[key]).replace(/202[0-6]/g, String(targetYear));
       if (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA') {
-        el.value = data[key];
+        el.value = value;
       } else {
-        el.textContent = data[key];
+        el.textContent = value;
       }
     }
   });
+
+  updateCopyrightYear();
 
   requestAnimationFrame(() => {
     TopBar.updateScrollProgress();
