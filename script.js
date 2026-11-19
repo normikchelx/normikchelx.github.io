@@ -72,6 +72,48 @@ const themeKeyMap = {
 
 let currentLangData = {};
 
+function detectBrowserLanguage() {
+  const rawLangs = Array.isArray(navigator.languages) && navigator.languages.length > 0
+    ? navigator.languages
+    : [navigator.language || navigator.userLanguage || 'en'];
+
+  const configKeys = Object.keys(langConfig);
+  const lowerMap = new Map(configKeys.map(k => [k.toLowerCase(), k]));
+
+  for (const raw of rawLangs) {
+    if (!raw || typeof raw !== 'string') continue;
+    const normalized = raw.trim().replace(/_/g, '-');
+    const lower = normalized.toLowerCase();
+
+    if (lowerMap.has(lower)) {
+      return lowerMap.get(lower);
+    }
+
+    if (lower.startsWith('zh')) {
+      if (lower.includes('tw') || lower.includes('hk') || lower.includes('mo') || lower.includes('hant')) {
+        if (lowerMap.has('zh-tw')) return 'zh-TW';
+      }
+      if (lower.includes('sg') || lower.includes('my')) {
+        if (lowerMap.has('zh-sg')) return 'zh-SG';
+      }
+      if (lowerMap.has('zh-cn')) return 'zh-CN';
+    }
+
+    if (lower.startsWith('mn')) {
+      if (lower.includes('mong') && lowerMap.has('mn-mong')) {
+        return 'mn-Mong';
+      }
+    }
+
+    const baseCode = lower.split('-')[0];
+    if (lowerMap.has(baseCode)) {
+      return lowerMap.get(baseCode);
+    }
+  }
+
+  return 'en';
+}
+
 document.addEventListener('DOMContentLoaded', () => {
   initCustomDropdowns();
   initTheme();
@@ -205,8 +247,8 @@ function setTheme(theme) {
 }
 
 function initLanguage() {
-  const savedLang = localStorage.getItem('normik-lang') || 'en';
-  const initialLang = langConfig[savedLang] ? savedLang : 'en';
+  const initialLang = detectBrowserLanguage();
+  localStorage.removeItem('normik-lang');
   const langDropdown = document.getElementById('lang-dropdown');
   const langMenu = document.getElementById('lang-menu');
 
@@ -228,7 +270,6 @@ function initLanguage() {
     `;
 
     btn.addEventListener('click', async () => {
-      localStorage.setItem('normik-lang', code);
       updateLangUI(code);
       langDropdown.classList.remove('open');
       langDropdown.querySelector('.dropdown-trigger').setAttribute('aria-expanded', 'false');

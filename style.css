@@ -560,7 +560,6 @@ html[dir="rtl"] .link-card:hover .arrow-icon {
   transform: scaleX(-1) translateX(4px);
 }
 
-/* Традиционное старомонгольское вертикальное письмо (mn-Mong) */
 html.lang-vertical body {
   justify-content: flex-start;
   align-items: flex-start;
