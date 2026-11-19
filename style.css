@@ -667,3 +667,100 @@ footer {
     display: none;
   }
 }
+
+
+/* =========================================================
+   LENIS SMOOTH SCROLL, TOP BARS & CUSTOM SCROLLBAR
+   ========================================================= */
+html.lenis,
+html.lenis body {
+  height: auto;
+}
+
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+
+.lenis.lenis-smooth [data-lenis-prevent] {
+  overscroll-behavior: contain;
+}
+
+.lenis.lenis-stopped {
+  overflow: hidden;
+}
+
+/* Полоска прогресса загрузки сверху (как NProgress / YouTube) */
+#top-load-bar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 3px;
+  background: linear-gradient(90deg, #3b82f6, #60a5fa, #38bdf8);
+  box-shadow: 0 0 10px rgba(59, 130, 246, 0.75);
+  transform-origin: 0 50%;
+  transform: scaleX(0);
+  opacity: 0;
+  z-index: 10000;
+  pointer-events: none;
+}
+
+/* Полоска прогресса прокрутки страницы сверху */
+#top-scroll-bar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 3px;
+  background: linear-gradient(90deg, #2563eb, #38bdf8);
+  transform-origin: 0 50%;
+  transform: scaleX(0);
+  z-index: 9999;
+  pointer-events: none;
+  transition: transform 0.06s linear;
+}
+
+/* Кастомный скролл-бар для всей страницы и выпадающих списков */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(15, 23, 42, 0.25);
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(96, 165, 250, 0.45);
+  border-radius: 999px;
+  border: 2px solid transparent;
+  background-clip: content-box;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(96, 165, 250, 0.8);
+  border: 2px solid transparent;
+  background-clip: content-box;
+}
+
+html.theme-light ::-webkit-scrollbar-track {
+  background: rgba(226, 232, 240, 0.6);
+}
+
+html.theme-light ::-webkit-scrollbar-thumb {
+  background: rgba(59, 130, 246, 0.45);
+  border: 2px solid transparent;
+  background-clip: content-box;
+}
+
+html.theme-light ::-webkit-scrollbar-thumb:hover {
+  background: rgba(37, 99, 235, 0.8);
+  border: 2px solid transparent;
+  background-clip: content-box;
+}
+
+/* Firefox */
+html {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(96, 165, 250, 0.55) transparent;
+}

@@ -76,7 +76,137 @@ const themeKeyMap = {
 };
 
 let currentLangData = {};
+let lenisInstance = null;
 
+/* =========================================================
+   1. TOP PROGRESS BAR (Загрузка страницы + прогресс скролла)
+   ========================================================= */
+const TopBar = (() => {
+  let loadEl = null;
+  let scrollEl = null;
+  let loadTimer = null;
+
+  function ensureElements() {
+    if (!loadEl) {
+      loadEl = document.createElement('div');
+      loadEl.id = 'top-load-bar';
+      document.body.appendChild(loadEl);
+    }
+    if (!scrollEl) {
+      scrollEl = document.createElement('div');
+      scrollEl.id = 'top-scroll-bar';
+      document.body.appendChild(scrollEl);
+    }
+  }
+
+  function startLoad() {
+    ensureElements();
+    clearTimeout(loadTimer);
+    loadEl.classList.remove('done');
+    loadEl.style.transition = 'none';
+    loadEl.style.transform = 'scaleX(0)';
+    loadEl.style.opacity = '1';
+
+    void loadEl.offsetWidth;
+
+    loadEl.style.transition = 'transform 0.45s cubic-bezier(0.22, 1, 0.36, 1)';
+    loadEl.style.transform = 'scaleX(0.72)';
+
+    loadTimer = setTimeout(() => {
+      loadEl.style.transition = 'transform 2.5s cubic-bezier(0.1, 0.5, 0.2, 1)';
+      loadEl.style.transform = 'scaleX(0.92)';
+    }, 450);
+  }
+
+  function finishLoad() {
+    ensureElements();
+    clearTimeout(loadTimer);
+    loadEl.style.transition = 'transform 0.25s ease-out';
+    loadEl.style.transform = 'scaleX(1)';
+
+    loadTimer = setTimeout(() => {
+      loadEl.style.transition = 'opacity 0.3s ease';
+      loadEl.style.opacity = '0';
+      setTimeout(() => {
+        loadEl.style.transform = 'scaleX(0)';
+      }, 300);
+    }, 260);
+  }
+
+  function updateScrollProgress() {
+    if (!scrollEl) return;
+    const scrollTop = window.scrollY || document.documentElement.scrollTop;
+    const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+    const progress = docHeight > 0 ? Math.min(Math.max(scrollTop / docHeight, 0), 1) : 0;
+    scrollEl.style.transform = `scaleX(${progress})`;
+  }
+
+  function init() {
+    ensureElements();
+    startLoad();
+
+    if (document.readyState === 'complete') {
+      finishLoad();
+    } else {
+      window.addEventListener('load', finishLoad, { once: true });
+    }
+
+    window.addEventListener('beforeunload', () => {
+      startLoad();
+    });
+
+    window.addEventListener('scroll', updateScrollProgress, { passive: true });
+    window.addEventListener('resize', updateScrollProgress, { passive: true });
+    updateScrollProgress();
+  }
+
+  return { init, startLoad, finishLoad, updateScrollProgress };
+})();
+
+/* =========================================================
+   2. LENIS SMOOTH SCROLL (Подключение с CDN и автозапуск)
+   ========================================================= */
+function initLenis() {
+  const startLenis = () => {
+    if (typeof window.Lenis === 'undefined') return;
+
+    lenisInstance = new window.Lenis({
+      duration: 1.15,
+      easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+      smoothWheel: true,
+      wheelMultiplier: 1,
+      touchMultiplier: 1.5
+    });
+
+    lenisInstance.on('scroll', () => {
+      TopBar.updateScrollProgress();
+    });
+
+    function raf(time) {
+      lenisInstance.raf(time);
+      requestAnimationFrame(raf);
+    }
+    requestAnimationFrame(raf);
+  };
+
+  if (typeof window.Lenis !== 'undefined') {
+    startLenis();
+    return;
+  }
+
+  const script = document.createElement('script');
+  script.src = 'https://unpkg.com/lenis@1.1.18/dist/lenis.min.js';
+  script.async = true;
+  script.onload = startLenis;
+  script.onerror = () => {
+    console.warn('Lenis CDN unavailable, using native smooth scroll.');
+  };
+  document.head.appendChild(script);
+}
+
+/* =========================================================
+   3. ЛОКАЛИЗАЦИЯ КАК В GETTR
+   ========================================================= */
 function matchSupportedLang(raw) {
   if (!raw || typeof raw !== 'string') return null;
 
@@ -131,30 +261,27 @@ function resolveInitialLanguage() {
   const lastBrowserLang = localStorage.getItem(STORAGE_KEYS.LAST_BROWSER_LANG);
   const savedUserLang = matchSupportedLang(localStorage.getItem(STORAGE_KEYS.USER_SELECTED_LANG));
 
-  // Логика GETTR (LAST_BROWSER_LANG):
-  // 1. Если язык браузера изменился с прошлого визита — сбрасываем ручной выбор и ставим новый язык браузера.
   if (lastBrowserLang && lastBrowserLang !== currentBrowserLang) {
     localStorage.setItem(STORAGE_KEYS.LAST_BROWSER_LANG, currentBrowserLang);
     localStorage.setItem(STORAGE_KEYS.USER_SELECTED_LANG, currentBrowserLang);
     return currentBrowserLang;
   }
 
-  // 2. Фиксируем текущий язык браузера, если его ещё не было
   if (!lastBrowserLang) {
     localStorage.setItem(STORAGE_KEYS.LAST_BROWSER_LANG, currentBrowserLang);
   }
 
-  // 3. Если юзер уже выбирал язык вручную и язык браузера не менялся — уважаем его выбор
   if (savedUserLang) {
     return savedUserLang;
   }
 
-  // 4. По умолчанию ставим язык браузера (или 'en' если язык не поддерживается)
   localStorage.setItem(STORAGE_KEYS.USER_SELECTED_LANG, currentBrowserLang);
   return currentBrowserLang;
 }
 
 document.addEventListener('DOMContentLoaded', () => {
+  TopBar.init();
+  initLenis();
   initCustomDropdowns();
   initTheme();
   initLanguage();
@@ -174,6 +301,9 @@ function initCustomDropdowns() {
     const trigger = dropdown.querySelector('.dropdown-trigger');
     const menu = dropdown.querySelector('.dropdown-menu');
     const pill = menu.querySelector('.hover-pill');
+
+    // Останавливаем перехват скролла Lenis внутри длинного меню языков
+    menu.setAttribute('data-lenis-prevent', '');
 
     trigger.addEventListener('click', (e) => {
       e.stopPropagation();
@@ -322,7 +452,6 @@ function initLanguage() {
   updateLangUI(initialLang);
   loadAndApplyLang(initialLang);
 
-  // Реакция на смену языка в браузере «на лету» (как в GETTR)
   window.addEventListener('languagechange', async () => {
     const updatedBrowserLang = getBrowserLanguage();
     localStorage.setItem(STORAGE_KEYS.LAST_BROWSER_LANG, updatedBrowserLang);
@@ -350,6 +479,7 @@ function updateLangUI(code) {
 }
 
 async function loadAndApplyLang(lang) {
+  TopBar.startLoad();
   try {
     const response = await fetch(`lang/${lang}.json?v=5`);
 
@@ -369,6 +499,8 @@ async function loadAndApplyLang(lang) {
     applyLang(data);
   } catch (error) {
     console.error('Error loading language file:', error);
+  } finally {
+    TopBar.finishLoad();
   }
 }
 
@@ -387,6 +519,10 @@ function applyLang(data) {
         el.textContent = data[key];
       }
     }
+  });
+
+  requestAnimationFrame(() => {
+    TopBar.updateScrollProgress();
   });
 }
 
